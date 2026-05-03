@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Project Polaris — Section 4: Pricing Benchmarking</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --orange: #E8500A;
+  --orange-light: #FFF0E8;
+  --dark: #111111;
+  --mid: #666666;
+  --border: #E2E2E2;
+  --bg: #F6F6F4;
+  --white: #FFFFFF;
+  --success: #2D8C4E;
+  --high: #C0392B;
+  --hector-row: #FFF6F0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; }
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--dark); color: white;
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-brand { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; }
+.topbar-brand span { color: var(--orange); }
+.topbar-section { font-size: 10px; color: #aaa; font-family: 'DM Mono', monospace; }
+.topbar-progress { font-size: 10px; color: #777; font-family: 'DM Mono', monospace; margin-top: 2px; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { background: #2a2a2a; height: 3px; }
+.progress-bar { height: 3px; background: var(--orange); width: 5%; transition: width 0.5s ease; }
+
+/* ── PAGE ── */
+.page { max-width: 720px; margin: 0 auto; padding: 16px 16px 120px; }
+
+.section-header { padding: 16px 0 12px; border-bottom: 2px solid var(--dark); margin-bottom: 18px; }
+.section-header h1 { font-size: 19px; font-weight: 700; }
+.section-header p { font-size: 11px; color: var(--mid); margin-top: 3px; font-family: 'DM Mono', monospace; }
+
+/* ── META CARD ── */
+.meta-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; margin-bottom: 16px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+
+/* ── CONFIG BANNER ── */
+.config-banner {
+  background: #FFF3E0; border: 1px solid #FFB74D;
+  border-radius: 8px; padding: 11px 14px; margin-bottom: 16px;
+  font-size: 11.5px; color: #E65100; line-height: 1.6;
+}
+.config-banner strong { display: block; margin-bottom: 3px; font-size: 12.5px; }
+.config-banner input { margin-top: 6px; font-size: 12px; padding: 6px 9px; border-color: #FFB74D; width: 100%;
+  border: 1px solid #FFB74D; border-radius: 6px; font-family: 'DM Sans', sans-serif; }
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: 14px; overflow: hidden;
+}
+.q-header {
+  padding: 9px 13px; background: #FAFAFA;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.q-num { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--orange); }
+.q-priority { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.04em; }
+.p-high { background: var(--high); color: white; }
+.q-method { font-size: 9px; color: var(--mid); margin-left: auto; font-family: 'DM Mono', monospace; }
+.q-body { padding: 13px; }
+.q-text { font-size: 13.5px; font-weight: 600; margin-bottom: 11px; line-height: 1.4; }
+.q-sub { font-size: 11px; color: var(--mid); margin-bottom: 11px; line-height: 1.5; }
+
+/* ── FORM ELEMENTS ── */
+label { font-size: 11.5px; color: var(--mid); display: block; margin-bottom: 3px; }
+input[type="text"], input[type="number"], textarea, select {
+  width: 100%; padding: 8px 11px;
+  border: 1px solid var(--border); border-radius: 6px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  background: var(--white); color: var(--dark); transition: border 0.2s;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--orange); }
+textarea { resize: vertical; min-height: 65px; }
+.field-row { margin-bottom: 11px; }
+.field-grid { display: grid; gap: 10px; }
+.field-grid.cols2 { grid-template-columns: 1fr 1fr; }
+.field-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ── NOTE BOX ── */
+.note {
+  background: #EAF4FB; border-left: 3px solid #2980B9;
+  padding: 9px 11px; border-radius: 0 6px 6px 0;
+  font-size: 11.5px; color: #1A5276; margin-bottom: 11px; line-height: 1.5;
+}
+
+/* ── SUB LABEL ── */
+.sub-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--mid); text-transform: uppercase; margin: 13px 0 6px;
+}
+
+/* ── HECTOR BADGE ── */
+.hector-badge {
+  display: inline-block; font-size: 8px; font-weight: 700;
+  background: var(--orange); color: white;
+  padding: 1px 4px; border-radius: 3px; margin-right: 4px;
+}
+
+/* ── TABLES ── */
+.survey-table { width: 100%; border-collapse: collapse; margin-top: 7px; font-size: 12px; }
+.survey-table th {
+  background: var(--dark); color: white; padding: 7px 9px;
+  text-align: center; font-size: 10.5px; font-weight: 600; letter-spacing: 0.03em;
+}
+.survey-table th:first-child { text-align: left; }
+.survey-table th.hector-th { background: var(--orange); }
+.survey-table td { padding: 7px 9px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.survey-table tr:last-child td { border-bottom: none; }
+.survey-table tr:nth-child(even) td { background: #FAFAFA; }
+.survey-table tr.hector-row td { background: var(--hector-row); }
+.survey-table tr.hector-row td:first-child { font-weight: 600; color: var(--orange); }
+.survey-table input[type="text"],
+.survey-table input[type="number"] { padding: 5px 7px; font-size: 12px; border-radius: 4px; }
+.survey-table select { padding: 5px 7px; font-size: 12px; border-radius: 4px; }
+
+/* ── SCHEME CHECKS ── */
+.scheme-checks { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.scheme-checks label {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 8px;
+  font-size: 11px; color: var(--dark); cursor: pointer; margin: 0;
+  white-space: nowrap;
+}
+.scheme-checks label:has(input:checked) { background: var(--orange-light); border-color: var(--orange); color: var(--orange); }
+.scheme-checks input { display: inline; width: auto; margin: 0; }
+
+/* ── MARGIN DISPLAY ── */
+.margin-display {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 5px 8px; font-size: 12px;
+  font-family: 'DM Mono', monospace; color: var(--dark);
+  text-align: center; min-width: 60px;
+}
+.margin-display.positive { color: var(--success); }
+.margin-display.negative { color: var(--high); }
+
+/* ── PRICE LADDER ── */
+.ladder-wrap { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.ladder-item {
+  flex: 1; min-width: 80px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 10px; text-align: center;
+}
+.ladder-item.hector { background: var(--orange-light); border-color: var(--orange); }
+.ladder-name { font-size: 9px; font-weight: 700; color: var(--mid); text-transform: uppercase; letter-spacing: 0.05em; }
+.ladder-item.hector .ladder-name { color: var(--orange); }
+.ladder-price { font-size: 16px; font-weight: 700; color: var(--dark); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.ladder-item.hector .ladder-price { color: var(--orange); }
+.ladder-sku { font-size: 9px; color: var(--mid); margin-top: 2px; }
+
+/* ── NAV BAR ── */
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--white); border-top: 1px solid var(--border);
+  padding: 12px 16px; display: flex; gap: 10px;
+  max-width: 720px; margin: 0 auto;
+}
+.btn-submit {
+  flex: 2; padding: 13px;
+  background: var(--orange); color: white;
+  border: none; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-submit:hover { background: #C94008; }
+.btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+.btn-gform {
+  flex: 1; padding: 13px;
+  background: var(--white); color: var(--dark);
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.btn-gform:hover { border-color: var(--dark); }
+
+/* ── STATUS ── */
+.status-msg { margin-top: 10px; padding: 11px 13px; border-radius: 6px; font-size: 12.5px; text-align: center; display: none; }
+.status-msg.success { background: #D5F0DE; color: var(--success); display: block; }
+.status-msg.error   { background: #FDECEA; color: var(--high); display: block; }
+.status-msg.loading { background: #FFF3E0; color: var(--orange); display: block; }
+
+@media (max-width: 480px) {
+  .field-grid.cols2, .field-grid.cols3 { grid-template-columns: 1fr; }
+  .meta-card { grid-template-columns: 1fr; }
+  .survey-table, .survey-table th, .survey-table td { font-size: 11px; padding: 5px 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div>
+    <div class="topbar-brand">PROJECT <span>POLARIS</span></div>
+    <div class="topbar-section">Section 4 of 4 — Pricing Benchmarking</div>
+  </div>
+  <div style="text-align:right;">
+    <div class="topbar-progress" id="progressLabel">Selected stores only</div>
+  </div>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:75%"></div></div>
+
+<div class="page">
+
+<!-- SECTION HEADER -->
+<div class="section-header">
+  <h1>Section 4 — Pricing Benchmarking</h1>
+  <p>EST. TIME: 8–10 MIN · 4 QUESTIONS · SELECTED STORES ONLY · OBSERVE + ASK</p>
+</div>
+
+<!-- CONFIG BANNER -->
+<div class="config-banner" id="configBanner">
+  <strong>⚙ One-time Setup — Google Apps Script URL</strong>
+  Paste your Google Apps Script deployment URL to enable direct response collection into Google Sheets.
+  <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" oninput="saveScriptUrl()" />
+</div>
+
+<!-- META -->
+<div class="meta-card">
+  <div class="field-row"><label>Enumerator Name</label><input type="text" id="meta_name" placeholder="Full name" /></div>
+  <div class="field-row"><label>Date</label><input type="text" id="meta_date" placeholder="DD/MM/YYYY" /></div>
+  <div class="field-row"><label>City / Town</label><input type="text" id="meta_city" placeholder="e.g. Mumbai" /></div>
+  <div class="field-row"><label>Store Code / Name</label><input type="text" id="meta_store" placeholder="e.g. MUM-001" /></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Q20 — HIGHEST SELLING SKU BY CATEGORY & BRAND
+════════════════════════════════════════════════════════════════ -->
+<div class="q-card">
+  <div class="q-header">
+    <span class="q-num">Q20</span>
+    <span class="q-priority p-high">HIGH</span>
+    <span class="q-method">OBSERVE + ASK</span>
+  </div>
+  <div class="q-body">
+    <div class="q-text">What is the highest-selling SKU in each beverage category — overall and by brand?</div>
+    <div class="note"><strong>★ Hector brands shaded.</strong> Write the best-selling SKU name (include pack size) for each brand in each category. Leave blank if brand not stocked in this store.</div>
+
+    <!-- Fruit Juices -->
+    <div class="sub-label">Packaged Fruit Juices</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:700px;">
+        <tr>
+          <th style="text-align:left;width:18%">Brand</th>
+          <th class="hector-th">★ Hector<br><span style="font-weight:400;font-size:9px;">Paper Boat</span></th>
+          <th>Tropicana<br><span style="font-weight:400;font-size:9px;">PepsiCo</span></th>
+          <th>Real / Dabur</th>
+          <th>B Natural<br><span style="font-weight:400;font-size:9px;">ITC</span></th>
+          <th>Maaza<br><span style="font-weight:400;font-size:9px;">Coca-Cola</span></th>
+          <th>Minute Maid<br><span style="font-weight:400;font-size:9px;">Coca-Cola</span></th>
+          <th>Raw Pressery</th>
+          <th>Storia</th>
+        </tr>
+        <tr class="hector-row">
+          <td style="font-size:10px;color:var(--mid)">Best-selling SKU</td>
+          <td><input type="text" id="q20_fj_hector" placeholder="e.g. Aam Panna 200ml" /></td>
+          <td><input type="text" id="q20_fj_trop" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fj_real" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fj_bn" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fj_maaza" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fj_mm" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fj_rp" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fj_storia" placeholder="SKU name" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Fruit Drinks -->
+    <div class="sub-label" style="margin-top:14px;">Fruit Based Drinks</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:700px;">
+        <tr>
+          <th style="text-align:left;width:18%">Brand</th>
+          <th class="hector-th">★ Hector<br><span style="font-weight:400;font-size:9px;">Swing</span></th>
+          <th>Tropicana</th>
+          <th>Real / Dabur</th>
+          <th>B Natural</th>
+          <th>Maaza</th>
+          <th>Minute Maid</th>
+          <th>Frooti<br><span style="font-weight:400;font-size:9px;">Parle</span></th>
+          <th>Other</th>
+        </tr>
+        <tr class="hector-row">
+          <td style="font-size:10px;color:var(--mid)">Best-selling SKU</td>
+          <td><input type="text" id="q20_fd_hector" placeholder="e.g. Swing Mango 250ml" /></td>
+          <td><input type="text" id="q20_fd_trop" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fd_real" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fd_bn" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fd_maaza" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fd_mm" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fd_frooti" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_fd_other" placeholder="SKU name" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Coconut Water -->
+    <div class="sub-label" style="margin-top:14px;">Coconut Water</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:600px;">
+        <tr>
+          <th style="text-align:left;width:18%">Brand</th>
+          <th class="hector-th">★ Hector<br><span style="font-weight:400;font-size:9px;">PB Coconut</span></th>
+          <th>Raw Pressery</th>
+          <th>Storia</th>
+          <th>Kinley /<br>Bisleri</th>
+          <th>Cocofit /<br>CocoJal</th>
+          <th>Other</th>
+        </tr>
+        <tr class="hector-row">
+          <td style="font-size:10px;color:var(--mid)">Best-selling SKU</td>
+          <td><input type="text" id="q20_cw_hector" placeholder="e.g. PB Coconut 200ml" /></td>
+          <td><input type="text" id="q20_cw_rp" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_cw_storia" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_cw_kinley" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_cw_cocofit" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_cw_other" placeholder="SKU name" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Inclusions -->
+    <div class="sub-label" style="margin-top:14px;">Inclusions (Nata / Mogu)</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:500px;">
+        <tr>
+          <th style="text-align:left;width:18%">Brand</th>
+          <th class="hector-th">★ Hector<br><span style="font-weight:400;font-size:9px;">PB Nata</span></th>
+          <th>Mogu Mogu</th>
+          <th>Other Brand 1</th>
+          <th>Other Brand 2</th>
+        </tr>
+        <tr class="hector-row">
+          <td style="font-size:10px;color:var(--mid)">Best-selling SKU</td>
+          <td><input type="text" id="q20_in_hector" placeholder="e.g. PB Nata 150ml" /></td>
+          <td><input type="text" id="q20_in_mogu" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_in_other1" placeholder="Brand + SKU" /></td>
+          <td><input type="text" id="q20_in_other2" placeholder="Brand + SKU" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Sparkling -->
+    <div class="sub-label" style="margin-top:14px;">Sparkling / Tonic</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:600px;">
+        <tr>
+          <th style="text-align:left;width:18%">Brand</th>
+          <th class="hector-th">★ Hector<br><span style="font-weight:400;font-size:9px;">PB Zero / Swing Soda</span></th>
+          <th>Kinley<br><span style="font-weight:400;font-size:9px;">Coca-Cola</span></th>
+          <th>Appy Fizz<br><span style="font-weight:400;font-size:9px;">Parle</span></th>
+          <th>Limca</th>
+          <th>Other</th>
+        </tr>
+        <tr class="hector-row">
+          <td style="font-size:10px;color:var(--mid)">Best-selling SKU</td>
+          <td><input type="text" id="q20_sp_hector" placeholder="e.g. PB Zero 250ml" /></td>
+          <td><input type="text" id="q20_sp_kinley" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_sp_appy" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_sp_limca" placeholder="SKU name" /></td>
+          <td><input type="text" id="q20_sp_other" placeholder="SKU name" /></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Q21 — MRP BENCHMARKING BY SKU SIZE
+════════════════════════════════════════════════════════════════ -->
+<div class="q-card">
+  <div class="q-header">
+    <span class="q-num">Q21</span>
+    <span class="q-priority p-high">HIGH</span>
+    <span class="q-method">OBSERVE & NOTES</span>
+  </div>
+  <div class="q-body">
+    <div class="q-text">For the same SKU size (ml) across brands — what is the MRP? Who is cheapest and most expensive?</div>
+    <div class="note"><strong>Compare like-for-like.</strong> Pick the SKU size most commonly stocked for each category. Record MRP (₹) for that exact size per brand. The price ladder summary auto-updates below each table.</div>
+
+    <!-- Fruit Juices Q21 -->
+    <div class="sub-label">Packaged Fruit Juices — MRP by SKU Size</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" id="q21_fj_table" style="min-width:680px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:100px;">SKU Size</th>
+          <th class="hector-th">★ Hector<br>Paper Boat</th>
+          <th>Tropicana</th>
+          <th>Real / Dabur</th>
+          <th>B Natural</th>
+          <th>Maaza</th>
+          <th>Minute Maid</th>
+          <th>Raw Pressery</th>
+          <th>Storia</th>
+        </tr>
+        <tr class="hector-row">
+          <td>
+            <select id="q21_fj_size1" onchange="updateLadder('fj')">
+              <option value="200ml">200 ml</option><option value="250ml">250 ml</option>
+              <option value="500ml">500 ml</option><option value="1000ml">1000 ml</option><option value="other">Other</option>
+            </select>
+          </td>
+          <td><input type="number" id="q21_fj_h1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_trop1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_real1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_bn1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_maaza1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_mm1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_rp1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_storia1" placeholder="₹" oninput="updateLadder('fj')" /></td>
+        </tr>
+        <tr>
+          <td>
+            <select id="q21_fj_size2" onchange="updateLadder('fj')">
+              <option value="1000ml">1000 ml</option><option value="750ml">750 ml</option>
+              <option value="500ml">500 ml</option><option value="other">Other</option>
+            </select>
+          </td>
+          <td><input type="number" id="q21_fj_h2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_trop2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_real2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_bn2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_maaza2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_mm2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_rp2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+          <td><input type="number" id="q21_fj_storia2" placeholder="₹" oninput="updateLadder('fj')" /></td>
+        </tr>
+      </table>
+    </div>
+    <div id="ladder_fj" class="ladder-wrap" style="margin-top:8px;"></div>
+
+    <!-- Fruit Drinks Q21 -->
+    <div class="sub-label" style="margin-top:16px;">Fruit Based Drinks — MRP by SKU Size</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:680px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:100px;">SKU Size</th>
+          <th class="hector-th">★ Hector<br>Swing</th>
+          <th>Tropicana</th>
+          <th>Real / Dabur</th>
+          <th>B Natural</th>
+          <th>Maaza</th>
+          <th>Minute Maid</th>
+          <th>Frooti</th>
+          <th>Other</th>
+        </tr>
+        <tr class="hector-row">
+          <td><select id="q21_fd_size1" onchange="updateLadder('fd')">
+            <option value="250ml">250 ml</option><option value="200ml">200 ml</option>
+            <option value="500ml">500 ml</option><option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_fd_h1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_trop1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_real1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_bn1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_maaza1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_mm1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_frooti1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_other1" placeholder="₹" oninput="updateLadder('fd')" /></td>
+        </tr>
+        <tr>
+          <td><select id="q21_fd_size2" onchange="updateLadder('fd')">
+            <option value="600ml">600 ml</option><option value="500ml">500 ml</option>
+            <option value="1000ml">1000 ml</option><option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_fd_h2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_trop2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_real2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_bn2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_maaza2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_mm2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_frooti2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+          <td><input type="number" id="q21_fd_other2" placeholder="₹" oninput="updateLadder('fd')" /></td>
+        </tr>
+      </table>
+    </div>
+    <div id="ladder_fd" class="ladder-wrap"></div>
+
+    <!-- Coconut Water Q21 -->
+    <div class="sub-label" style="margin-top:16px;">Coconut Water — MRP by SKU Size</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:580px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:100px;">SKU Size</th>
+          <th class="hector-th">★ Hector<br>PB Coconut</th>
+          <th>Raw Pressery</th>
+          <th>Storia</th>
+          <th>Kinley /<br>Bisleri</th>
+          <th>Cocofit /<br>CocoJal</th>
+          <th>Other</th>
+        </tr>
+        <tr class="hector-row">
+          <td><select id="q21_cw_size1" onchange="updateLadder('cw')">
+            <option value="200ml">200 ml</option><option value="250ml">250 ml</option>
+            <option value="500ml">500 ml</option><option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_cw_h1" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_rp1" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_storia1" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_kinley1" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_cocofit1" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_other1" placeholder="₹" oninput="updateLadder('cw')" /></td>
+        </tr>
+        <tr>
+          <td><select id="q21_cw_size2" onchange="updateLadder('cw')">
+            <option value="500ml">500 ml</option><option value="750ml">750 ml</option>
+            <option value="1000ml">1000 ml</option><option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_cw_h2" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_rp2" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_storia2" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_kinley2" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_cocofit2" placeholder="₹" oninput="updateLadder('cw')" /></td>
+          <td><input type="number" id="q21_cw_other2" placeholder="₹" oninput="updateLadder('cw')" /></td>
+        </tr>
+      </table>
+    </div>
+    <div id="ladder_cw" class="ladder-wrap"></div>
+
+    <!-- Inclusions Q21 -->
+    <div class="sub-label" style="margin-top:16px;">Inclusions (Nata / Mogu) — MRP by SKU Size</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:420px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:100px;">SKU Size</th>
+          <th class="hector-th">★ Hector<br>PB Nata</th>
+          <th>Mogu Mogu</th>
+          <th>Other Brand 1</th>
+          <th>Other Brand 2</th>
+        </tr>
+        <tr class="hector-row">
+          <td><select id="q21_in_size1" onchange="updateLadder('in')">
+            <option value="150ml">150 ml</option><option value="200ml">200 ml</option>
+            <option value="300ml">300 ml</option><option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_in_h1" placeholder="₹" oninput="updateLadder('in')" /></td>
+          <td><input type="number" id="q21_in_mogu1" placeholder="₹" oninput="updateLadder('in')" /></td>
+          <td><input type="number" id="q21_in_ob1_1" placeholder="₹" oninput="updateLadder('in')" /></td>
+          <td><input type="number" id="q21_in_ob2_1" placeholder="₹" oninput="updateLadder('in')" /></td>
+        </tr>
+        <tr>
+          <td><select id="q21_in_size2" onchange="updateLadder('in')">
+            <option value="300ml">300 ml</option><option value="500ml">500 ml</option>
+            <option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_in_h2" placeholder="₹" oninput="updateLadder('in')" /></td>
+          <td><input type="number" id="q21_in_mogu2" placeholder="₹" oninput="updateLadder('in')" /></td>
+          <td><input type="number" id="q21_in_ob1_2" placeholder="₹" oninput="updateLadder('in')" /></td>
+          <td><input type="number" id="q21_in_ob2_2" placeholder="₹" oninput="updateLadder('in')" /></td>
+        </tr>
+      </table>
+    </div>
+    <div id="ladder_in" class="ladder-wrap"></div>
+
+    <!-- Sparkling Q21 -->
+    <div class="sub-label" style="margin-top:16px;">Sparkling / Tonic — MRP by SKU Size</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:520px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:100px;">SKU Size</th>
+          <th class="hector-th">★ Hector<br>PB Zero / Swing Soda</th>
+          <th>Kinley</th>
+          <th>Appy Fizz</th>
+          <th>Limca</th>
+          <th>Other</th>
+        </tr>
+        <tr class="hector-row">
+          <td><select id="q21_sp_size1" onchange="updateLadder('sp')">
+            <option value="250ml">250 ml</option><option value="200ml">200 ml</option>
+            <option value="300ml">300 ml</option><option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_sp_h1" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_kinley1" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_appy1" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_limca1" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_other1" placeholder="₹" oninput="updateLadder('sp')" /></td>
+        </tr>
+        <tr>
+          <td><select id="q21_sp_size2" onchange="updateLadder('sp')">
+            <option value="500ml">500 ml</option><option value="750ml">750 ml</option>
+            <option value="other">Other</option>
+          </select></td>
+          <td><input type="number" id="q21_sp_h2" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_kinley2" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_appy2" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_limca2" placeholder="₹" oninput="updateLadder('sp')" /></td>
+          <td><input type="number" id="q21_sp_other2" placeholder="₹" oninput="updateLadder('sp')" /></td>
+        </tr>
+      </table>
+    </div>
+    <div id="ladder_sp" class="ladder-wrap"></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Q22 + Q23 — PTR, MOP & RETAILER MARGIN
+════════════════════════════════════════════════════════════════ -->
+<div class="q-card">
+  <div class="q-header">
+    <span class="q-num">Q22 + Q23</span>
+    <span class="q-priority p-high">HIGH</span>
+    <span class="q-method">ASK</span>
+  </div>
+  <div class="q-body">
+    <div class="q-text">Distributor price (PTR) and consumer selling price (MOP) — by brand and category</div>
+    <div class="note"><strong>Ask:</strong> "What price do you buy this from the distributor?" (PTR) and "What price do you sell it to the customer?" (MOP). Retailer margin is auto-calculated. ★ Hector rows shaded.</div>
+
+    <!-- Fruit Juices -->
+    <div class="sub-label">Packaged Fruit Juices</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:620px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:22%">Brand</th>
+          <th>PTR (₹/unit)</th>
+          <th>MOP (₹/unit)</th>
+          <th>MRP (₹/unit)</th>
+          <th>Retailer<br>Margin %</th>
+          <th>Scheme<br>Active?</th>
+          <th>Remarks</th>
+        </tr>
+        <tr class="hector-row"><td><span class="hector-badge">★</span>Paper Boat</td>
+          <td><input type="number" id="q22_fj_h_ptr" placeholder="₹" oninput="calcMargin('fj_h')" /></td>
+          <td><input type="number" id="q22_fj_h_mop" placeholder="₹" oninput="calcMargin('fj_h')" /></td>
+          <td><input type="number" id="q22_fj_h_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fj_h">—</div></td>
+          <td><select id="q22_fj_h_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fj_h_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Tropicana</td>
+          <td><input type="number" id="q22_fj_trop_ptr" placeholder="₹" oninput="calcMargin('fj_trop')" /></td>
+          <td><input type="number" id="q22_fj_trop_mop" placeholder="₹" oninput="calcMargin('fj_trop')" /></td>
+          <td><input type="number" id="q22_fj_trop_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fj_trop">—</div></td>
+          <td><select id="q22_fj_trop_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fj_trop_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Real / Dabur</td>
+          <td><input type="number" id="q22_fj_real_ptr" placeholder="₹" oninput="calcMargin('fj_real')" /></td>
+          <td><input type="number" id="q22_fj_real_mop" placeholder="₹" oninput="calcMargin('fj_real')" /></td>
+          <td><input type="number" id="q22_fj_real_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fj_real">—</div></td>
+          <td><select id="q22_fj_real_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fj_real_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>B Natural</td>
+          <td><input type="number" id="q22_fj_bn_ptr" placeholder="₹" oninput="calcMargin('fj_bn')" /></td>
+          <td><input type="number" id="q22_fj_bn_mop" placeholder="₹" oninput="calcMargin('fj_bn')" /></td>
+          <td><input type="number" id="q22_fj_bn_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fj_bn">—</div></td>
+          <td><select id="q22_fj_bn_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fj_bn_rem" placeholder="Notes" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Fruit Drinks -->
+    <div class="sub-label" style="margin-top:14px;">Fruit Based Drinks</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:620px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:22%">Brand</th>
+          <th>PTR (₹/unit)</th><th>MOP (₹/unit)</th><th>MRP (₹/unit)</th>
+          <th>Retailer<br>Margin %</th><th>Scheme<br>Active?</th><th>Remarks</th>
+        </tr>
+        <tr class="hector-row"><td><span class="hector-badge">★</span>Swing (Paperboat)</td>
+          <td><input type="number" id="q22_fd_h_ptr" placeholder="₹" oninput="calcMargin('fd_h')" /></td>
+          <td><input type="number" id="q22_fd_h_mop" placeholder="₹" oninput="calcMargin('fd_h')" /></td>
+          <td><input type="number" id="q22_fd_h_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fd_h">—</div></td>
+          <td><select id="q22_fd_h_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fd_h_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Maaza</td>
+          <td><input type="number" id="q22_fd_maaza_ptr" placeholder="₹" oninput="calcMargin('fd_maaza')" /></td>
+          <td><input type="number" id="q22_fd_maaza_mop" placeholder="₹" oninput="calcMargin('fd_maaza')" /></td>
+          <td><input type="number" id="q22_fd_maaza_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fd_maaza">—</div></td>
+          <td><select id="q22_fd_maaza_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fd_maaza_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Minute Maid</td>
+          <td><input type="number" id="q22_fd_mm_ptr" placeholder="₹" oninput="calcMargin('fd_mm')" /></td>
+          <td><input type="number" id="q22_fd_mm_mop" placeholder="₹" oninput="calcMargin('fd_mm')" /></td>
+          <td><input type="number" id="q22_fd_mm_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fd_mm">—</div></td>
+          <td><select id="q22_fd_mm_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fd_mm_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Frooti (Parle)</td>
+          <td><input type="number" id="q22_fd_frooti_ptr" placeholder="₹" oninput="calcMargin('fd_frooti')" /></td>
+          <td><input type="number" id="q22_fd_frooti_mop" placeholder="₹" oninput="calcMargin('fd_frooti')" /></td>
+          <td><input type="number" id="q22_fd_frooti_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_fd_frooti">—</div></td>
+          <td><select id="q22_fd_frooti_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_fd_frooti_rem" placeholder="Notes" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Coconut Water -->
+    <div class="sub-label" style="margin-top:14px;">Coconut Water</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:620px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:22%">Brand</th>
+          <th>PTR (₹/unit)</th><th>MOP (₹/unit)</th><th>MRP (₹/unit)</th>
+          <th>Retailer<br>Margin %</th><th>Scheme<br>Active?</th><th>Remarks</th>
+        </tr>
+        <tr class="hector-row"><td><span class="hector-badge">★</span>PB Coconut</td>
+          <td><input type="number" id="q22_cw_h_ptr" placeholder="₹" oninput="calcMargin('cw_h')" /></td>
+          <td><input type="number" id="q22_cw_h_mop" placeholder="₹" oninput="calcMargin('cw_h')" /></td>
+          <td><input type="number" id="q22_cw_h_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_cw_h">—</div></td>
+          <td><select id="q22_cw_h_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_cw_h_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Raw Pressery</td>
+          <td><input type="number" id="q22_cw_rp_ptr" placeholder="₹" oninput="calcMargin('cw_rp')" /></td>
+          <td><input type="number" id="q22_cw_rp_mop" placeholder="₹" oninput="calcMargin('cw_rp')" /></td>
+          <td><input type="number" id="q22_cw_rp_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_cw_rp">—</div></td>
+          <td><select id="q22_cw_rp_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_cw_rp_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Storia</td>
+          <td><input type="number" id="q22_cw_storia_ptr" placeholder="₹" oninput="calcMargin('cw_storia')" /></td>
+          <td><input type="number" id="q22_cw_storia_mop" placeholder="₹" oninput="calcMargin('cw_storia')" /></td>
+          <td><input type="number" id="q22_cw_storia_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_cw_storia">—</div></td>
+          <td><select id="q22_cw_storia_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_cw_storia_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Kinley / Bisleri</td>
+          <td><input type="number" id="q22_cw_kinley_ptr" placeholder="₹" oninput="calcMargin('cw_kinley')" /></td>
+          <td><input type="number" id="q22_cw_kinley_mop" placeholder="₹" oninput="calcMargin('cw_kinley')" /></td>
+          <td><input type="number" id="q22_cw_kinley_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_cw_kinley">—</div></td>
+          <td><select id="q22_cw_kinley_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_cw_kinley_rem" placeholder="Notes" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Sparkling -->
+    <div class="sub-label" style="margin-top:14px;">Sparkling / Tonic</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:620px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:22%">Brand</th>
+          <th>PTR (₹/unit)</th><th>MOP (₹/unit)</th><th>MRP (₹/unit)</th>
+          <th>Retailer<br>Margin %</th><th>Scheme<br>Active?</th><th>Remarks</th>
+        </tr>
+        <tr class="hector-row"><td><span class="hector-badge">★</span>PB Zero / Swing Soda</td>
+          <td><input type="number" id="q22_sp_h_ptr" placeholder="₹" oninput="calcMargin('sp_h')" /></td>
+          <td><input type="number" id="q22_sp_h_mop" placeholder="₹" oninput="calcMargin('sp_h')" /></td>
+          <td><input type="number" id="q22_sp_h_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_sp_h">—</div></td>
+          <td><select id="q22_sp_h_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_sp_h_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Kinley Club Soda</td>
+          <td><input type="number" id="q22_sp_kinley_ptr" placeholder="₹" oninput="calcMargin('sp_kinley')" /></td>
+          <td><input type="number" id="q22_sp_kinley_mop" placeholder="₹" oninput="calcMargin('sp_kinley')" /></td>
+          <td><input type="number" id="q22_sp_kinley_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_sp_kinley">—</div></td>
+          <td><select id="q22_sp_kinley_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_sp_kinley_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Appy Fizz</td>
+          <td><input type="number" id="q22_sp_appy_ptr" placeholder="₹" oninput="calcMargin('sp_appy')" /></td>
+          <td><input type="number" id="q22_sp_appy_mop" placeholder="₹" oninput="calcMargin('sp_appy')" /></td>
+          <td><input type="number" id="q22_sp_appy_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_sp_appy">—</div></td>
+          <td><select id="q22_sp_appy_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_sp_appy_rem" placeholder="Notes" /></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Inclusions -->
+    <div class="sub-label" style="margin-top:14px;">Inclusions (Nata / Mogu)</div>
+    <div style="overflow-x:auto;">
+      <table class="survey-table" style="min-width:620px;font-size:11.5px;">
+        <tr>
+          <th style="text-align:left;width:22%">Brand</th>
+          <th>PTR (₹/unit)</th><th>MOP (₹/unit)</th><th>MRP (₹/unit)</th>
+          <th>Retailer<br>Margin %</th><th>Scheme<br>Active?</th><th>Remarks</th>
+        </tr>
+        <tr class="hector-row"><td><span class="hector-badge">★</span>PB Nata</td>
+          <td><input type="number" id="q22_in_h_ptr" placeholder="₹" oninput="calcMargin('in_h')" /></td>
+          <td><input type="number" id="q22_in_h_mop" placeholder="₹" oninput="calcMargin('in_h')" /></td>
+          <td><input type="number" id="q22_in_h_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_in_h">—</div></td>
+          <td><select id="q22_in_h_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_in_h_rem" placeholder="Notes" /></td>
+        </tr>
+        <tr><td>Mogu Mogu</td>
+          <td><input type="number" id="q22_in_mogu_ptr" placeholder="₹" oninput="calcMargin('in_mogu')" /></td>
+          <td><input type="number" id="q22_in_mogu_mop" placeholder="₹" oninput="calcMargin('in_mogu')" /></td>
+          <td><input type="number" id="q22_in_mogu_mrp" placeholder="₹" /></td>
+          <td><div class="margin-display" id="margin_in_mogu">—</div></td>
+          <td><select id="q22_in_mogu_sch"><option value="">—</option><option>Yes</option><option>No</option></select></td>
+          <td><input type="text" id="q22_in_mogu_rem" placeholder="Notes" /></td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Q24 — TRADE SCHEMES & INCENTIVES
+════════════════════════════════════════════════════════════════ -->
+<div class="q-card">
+  <div class="q-header">
+    <span class="q-num">Q24</span>
+    <span class="q-priority p-high">HIGH</span>
+    <span class="q-method">ASK</span>
+  </div>
+  <div class="q-body">
+    <div class="q-text">What trade schemes and incentives do companies currently offer? What drives your push?</div>
+    <div class="note"><strong>Ask:</strong> "Which companies give you the best schemes right now? What kind?" Capture all active schemes — cash discounts, free stock, cashback, target-based. ★ Hector row shaded.</div>
+
+    <div id="q24_container"></div>
+
+    <div class="field-row" style="margin-top:14px;">
+      <label>Overall — which brand's scheme influences your push the most?</label>
+      <input type="text" id="q24_top_scheme_brand" placeholder="Brand name" />
+    </div>
+    <div class="field-row">
+      <label>Why?</label>
+      <textarea id="q24_top_scheme_reason" placeholder="e.g. highest margin, easiest targets, best free stock..." rows="2"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- OBSERVATIONS -->
+<div class="q-card">
+  <div class="q-header"><span class="q-num">Notes</span><span class="q-method">ENUMERATOR</span></div>
+  <div class="q-body">
+    <div class="field-row">
+      <label>Additional pricing observations / anomalies</label>
+      <textarea id="obs_notes" placeholder="Any unusual pricing, off-shelf deals, store-specific discounts, or other observations..." rows="3"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- NAV BAR -->
+<div class="nav-bar">
+  <a class="btn-gform" id="gformBtn" href="#" target="_blank">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    Google Form
+  </a>
+  <button class="btn-submit" id="submitBtn" onclick="submitForm()">Submit to Google Sheets ✓</button>
+</div>
+<div style="max-width:720px;margin:0 auto;padding:0 16px;">
+  <div class="status-msg" id="statusMsg"></div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+let SCRIPT_URL = '';
+const GFORM_URL = 'YOUR_GOOGLE_FORM_URL_HERE'; // ← Replace with your Google Form URL
+
+function saveScriptUrl() {
+  SCRIPT_URL = document.getElementById('scriptUrl').value.trim();
+  try { localStorage.setItem('polaris_s4_script', SCRIPT_URL); } catch(e){}
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    const saved = localStorage.getItem('polaris_s4_script');
+    if (saved) { SCRIPT_URL = saved; document.getElementById('scriptUrl').value = saved; }
+  } catch(e){}
+
+  // Set Google Form link
+  const gformBtn = document.getElementById('gformBtn');
+  if (GFORM_URL !== 'YOUR_GOOGLE_FORM_URL_HERE') {
+    gformBtn.href = GFORM_URL;
+  } else {
+    gformBtn.href = '#';
+    gformBtn.title = 'Replace GFORM_URL in the script with your Google Form link';
+  }
+
+  // Auto-fill date
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2,'0');
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const yyyy = today.getFullYear();
+  document.getElementById('meta_date').value = `${dd}/${mm}/${yyyy}`;
+
+  buildQ24();
+});
+
+// ── Q24 DYNAMIC BUILD ─────────────────────────────────────────────────────
+const Q24_BRANDS = [
+  { name: 'Hector / Paper Boat / Swing', hector: true },
+  { name: 'Tropicana (PepsiCo)', hector: false },
+  { name: 'Real / Dabur', hector: false },
+  { name: 'B Natural (ITC)', hector: false },
+  { name: 'Maaza (Coca-Cola)', hector: false },
+  { name: 'Minute Maid (Coca-Cola)', hector: false },
+  { name: 'Raw Pressery', hector: false },
+  { name: 'Storia', hector: false },
+  { name: 'Kinley / Bisleri Coconut', hector: false },
+  { name: 'Frooti (Parle)', hector: false },
+];
+
+function buildQ24() {
+  const container = document.getElementById('q24_container');
+  Q24_BRANDS.forEach((brand, i) => {
+    const key = 'q24_' + i;
+    const isH = brand.hector;
+    const div = document.createElement('div');
+    div.style.cssText = `background:${isH?'var(--hector-row)':'#fff'};border:1px solid var(--border);border-radius:8px;padding:12px 13px;margin-bottom:8px;`;
+    div.innerHTML = `
+      <div style="font-size:12.5px;font-weight:${isH?'700':'500'};color:${isH?'var(--orange)':'var(--dark)'};margin-bottom:8px;">
+        ${isH?'<span class="hector-badge">★</span>':''}${brand.name}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <label>Scheme type (tick all)</label>
+          <div class="scheme-checks">
+            <label><input type="checkbox" name="${key}_type" value="Cash Discount" /> Cash Disc.</label>
+            <label><input type="checkbox" name="${key}_type" value="Free Units" /> Free Units</label>
+            <label><input type="checkbox" name="${key}_type" value="Cashback" /> Cashback</label>
+            <label><input type="checkbox" name="${key}_type" value="Target Based" /> Target</label>
+            <label><input type="checkbox" name="${key}_type" value="None" /> None</label>
+          </div>
+        </div>
+        <div>
+          <label>Frequency</label>
+          <div class="scheme-checks">
+            <label><input type="checkbox" name="${key}_freq" value="Running" /> Running</label>
+            <label><input type="checkbox" name="${key}_freq" value="Seasonal" /> Seasonal</label>
+            <label><input type="checkbox" name="${key}_freq" value="Occasional" /> Occasional</label>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;">
+        <div><label>Scheme detail</label><input type="text" id="${key}_detail" placeholder="e.g. Buy 10 get 1 free, 5% on ₹5k+" /></div>
+        <div><label>Influences push?</label><select id="${key}_push"><option value="">—</option><option>Yes — strongly</option><option>Yes — somewhat</option><option>No</option></select></div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+// ── PRICE LADDER (Q21) ────────────────────────────────────────────────────
+const LADDER_CONFIG = {
+  fj: {
+    brands: [
+      { label:'Paper Boat', ids:['q21_fj_h1','q21_fj_h2'], hector:true },
+      { label:'Tropicana',  ids:['q21_fj_trop1','q21_fj_trop2'] },
+      { label:'Real',       ids:['q21_fj_real1','q21_fj_real2'] },
+      { label:'B Natural',  ids:['q21_fj_bn1','q21_fj_bn2'] },
+      { label:'Maaza',      ids:['q21_fj_maaza1','q21_fj_maaza2'] },
+      { label:'Minute Maid',ids:['q21_fj_mm1','q21_fj_mm2'] },
+      { label:'Raw Pressery',ids:['q21_fj_rp1','q21_fj_rp2'] },
+      { label:'Storia',     ids:['q21_fj_storia1','q21_fj_storia2'] },
+    ]
+  },
+  fd: {
+    brands: [
+      { label:'Swing',      ids:['q21_fd_h1','q21_fd_h2'], hector:true },
+      { label:'Tropicana',  ids:['q21_fd_trop1','q21_fd_trop2'] },
+      { label:'Real',       ids:['q21_fd_real1','q21_fd_real2'] },
+      { label:'B Natural',  ids:['q21_fd_bn1','q21_fd_bn2'] },
+      { label:'Maaza',      ids:['q21_fd_maaza1','q21_fd_maaza2'] },
+      { label:'Minute Maid',ids:['q21_fd_mm1','q21_fd_mm2'] },
+      { label:'Frooti',     ids:['q21_fd_frooti1','q21_fd_frooti2'] },
+    ]
+  },
+  cw: {
+    brands: [
+      { label:'PB Coconut', ids:['q21_cw_h1','q21_cw_h2'], hector:true },
+      { label:'Raw Pressery',ids:['q21_cw_rp1','q21_cw_rp2'] },
+      { label:'Storia',     ids:['q21_cw_storia1','q21_cw_storia2'] },
+      { label:'Kinley/Bisleri',ids:['q21_cw_kinley1','q21_cw_kinley2'] },
+      { label:'Cocofit',    ids:['q21_cw_cocofit1','q21_cw_cocofit2'] },
+    ]
+  },
+  in: {
+    brands: [
+      { label:'PB Nata',    ids:['q21_in_h1','q21_in_h2'], hector:true },
+      { label:'Mogu Mogu',  ids:['q21_in_mogu1','q21_in_mogu2'] },
+      { label:'Other 1',    ids:['q21_in_ob1_1','q21_in_ob1_2'] },
+      { label:'Other 2',    ids:['q21_in_ob2_1','q21_in_ob2_2'] },
+    ]
+  },
+  sp: {
+    brands: [
+      { label:'PB Zero',    ids:['q21_sp_h1','q21_sp_h2'], hector:true },
+      { label:'Kinley',     ids:['q21_sp_kinley1','q21_sp_kinley2'] },
+      { label:'Appy Fizz',  ids:['q21_sp_appy1','q21_sp_appy2'] },
+      { label:'Limca',      ids:['q21_sp_limca1','q21_sp_limca2'] },
+    ]
+  },
+};
+
+function updateLadder(cat) {
+  const config = LADDER_CONFIG[cat];
+  const container = document.getElementById('ladder_' + cat);
+  const entries = [];
+
+  config.brands.forEach(brand => {
+    const prices = brand.ids.map(id => parseFloat(document.getElementById(id)?.value || '')).filter(v => !isNaN(v));
+    if (prices.length > 0) {
+      entries.push({ label: brand.label, price: prices[0], hector: brand.hector || false });
+    }
+  });
+
+  if (entries.length < 2) { container.innerHTML = ''; return; }
+
+  entries.sort((a, b) => a.price - b.price);
+  container.innerHTML = entries.map((e, i) => {
+    const isLowest  = i === 0;
+    const isHighest = i === entries.length - 1;
+    const badge = isLowest ? '<span style="font-size:8px;background:#2D8C4E;color:#fff;padding:1px 4px;border-radius:3px;margin-left:3px;">LOWEST</span>'
+                : isHighest ? '<span style="font-size:8px;background:#C0392B;color:#fff;padding:1px 4px;border-radius:3px;margin-left:3px;">HIGHEST</span>' : '';
+    return `<div class="ladder-item${e.hector?' hector':''}">
+      <div class="ladder-name">${e.label}${badge}</div>
+      <div class="ladder-price">₹${e.price}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── MARGIN CALCULATOR (Q22+23) ────────────────────────────────────────────
+function calcMargin(key) {
+  const ptr = parseFloat(document.getElementById('q22_' + key + '_ptr')?.value || '');
+  const mop = parseFloat(document.getElementById('q22_' + key + '_mop')?.value || '');
+  const el  = document.getElementById('margin_' + key);
+  if (!el) return;
+  if (isNaN(ptr) || isNaN(mop) || mop === 0) { el.textContent = '—'; el.className = 'margin-display'; return; }
+  const margin = ((mop - ptr) / mop * 100).toFixed(1);
+  el.textContent = margin + '%';
+  el.className = 'margin-display ' + (parseFloat(margin) >= 0 ? 'positive' : 'negative');
+}
+
+// ── DATA COLLECTION ───────────────────────────────────────────────────────
+const val = id => document.getElementById(id)?.value || '';
+const getChecked = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e=>e.value).join(' | ');
+
+function collectAll() {
+  const data = {
+    timestamp: new Date().toISOString(),
+    section: 'S4 - Pricing Benchmarking',
+    enumerator: val('meta_name'),
+    date: val('meta_date'),
+    city: val('meta_city'),
+    store_code: val('meta_store'),
+
+    // Q20
+    q20_fj_hector:val('q20_fj_hector'), q20_fj_trop:val('q20_fj_trop'), q20_fj_real:val('q20_fj_real'),
+    q20_fj_bn:val('q20_fj_bn'), q20_fj_maaza:val('q20_fj_maaza'), q20_fj_mm:val('q20_fj_mm'),
+    q20_fj_rp:val('q20_fj_rp'), q20_fj_storia:val('q20_fj_storia'),
+    q20_fd_hector:val('q20_fd_hector'), q20_fd_trop:val('q20_fd_trop'), q20_fd_real:val('q20_fd_real'),
+    q20_fd_bn:val('q20_fd_bn'), q20_fd_maaza:val('q20_fd_maaza'), q20_fd_mm:val('q20_fd_mm'),
+    q20_fd_frooti:val('q20_fd_frooti'),
+    q20_cw_hector:val('q20_cw_hector'), q20_cw_rp:val('q20_cw_rp'), q20_cw_storia:val('q20_cw_storia'),
+    q20_cw_kinley:val('q20_cw_kinley'),
+    q20_in_hector:val('q20_in_hector'), q20_in_mogu:val('q20_in_mogu'),
+    q20_sp_hector:val('q20_sp_hector'), q20_sp_kinley:val('q20_sp_kinley'), q20_sp_appy:val('q20_sp_appy'),
+
+    // Q21
+    q21_fj_size1:val('q21_fj_size1'), q21_fj_h1:val('q21_fj_h1'), q21_fj_trop1:val('q21_fj_trop1'),
+    q21_fj_real1:val('q21_fj_real1'), q21_fj_bn1:val('q21_fj_bn1'), q21_fj_maaza1:val('q21_fj_maaza1'),
+    q21_fj_mm1:val('q21_fj_mm1'), q21_fj_rp1:val('q21_fj_rp1'), q21_fj_storia1:val('q21_fj_storia1'),
+    q21_fj_size2:val('q21_fj_size2'), q21_fj_h2:val('q21_fj_h2'), q21_fj_trop2:val('q21_fj_trop2'),
+    q21_fj_real2:val('q21_fj_real2'), q21_fj_bn2:val('q21_fj_bn2'), q21_fj_maaza2:val('q21_fj_maaza2'),
+    q21_fj_mm2:val('q21_fj_mm2'), q21_fj_rp2:val('q21_fj_rp2'), q21_fj_storia2:val('q21_fj_storia2'),
+    q21_fd_size1:val('q21_fd_size1'), q21_fd_h1:val('q21_fd_h1'), q21_fd_maaza1:val('q21_fd_maaza1'), q21_fd_mm1:val('q21_fd_mm1'),
+    q21_fd_size2:val('q21_fd_size2'), q21_fd_h2:val('q21_fd_h2'), q21_fd_maaza2:val('q21_fd_maaza2'), q21_fd_mm2:val('q21_fd_mm2'),
+    q21_cw_size1:val('q21_cw_size1'), q21_cw_h1:val('q21_cw_h1'), q21_cw_rp1:val('q21_cw_rp1'), q21_cw_storia1:val('q21_cw_storia1'),
+    q21_sp_size1:val('q21_sp_size1'), q21_sp_h1:val('q21_sp_h1'), q21_sp_kinley1:val('q21_sp_kinley1'),
+
+    // Q22+23
+    q22_fj_h_ptr:val('q22_fj_h_ptr'), q22_fj_h_mop:val('q22_fj_h_mop'), q22_fj_h_mrp:val('q22_fj_h_mrp'),
+    q22_fj_trop_ptr:val('q22_fj_trop_ptr'), q22_fj_trop_mop:val('q22_fj_trop_mop'),
+    q22_fj_real_ptr:val('q22_fj_real_ptr'), q22_fj_real_mop:val('q22_fj_real_mop'),
+    q22_fj_bn_ptr:val('q22_fj_bn_ptr'), q22_fj_bn_mop:val('q22_fj_bn_mop'),
+    q22_fd_h_ptr:val('q22_fd_h_ptr'), q22_fd_h_mop:val('q22_fd_h_mop'), q22_fd_h_mrp:val('q22_fd_h_mrp'),
+    q22_fd_maaza_ptr:val('q22_fd_maaza_ptr'), q22_fd_maaza_mop:val('q22_fd_maaza_mop'),
+    q22_fd_mm_ptr:val('q22_fd_mm_ptr'), q22_fd_mm_mop:val('q22_fd_mm_mop'),
+    q22_fd_frooti_ptr:val('q22_fd_frooti_ptr'), q22_fd_frooti_mop:val('q22_fd_frooti_mop'),
+    q22_cw_h_ptr:val('q22_cw_h_ptr'), q22_cw_h_mop:val('q22_cw_h_mop'), q22_cw_h_mrp:val('q22_cw_h_mrp'),
+    q22_cw_rp_ptr:val('q22_cw_rp_ptr'), q22_cw_rp_mop:val('q22_cw_rp_mop'),
+    q22_cw_storia_ptr:val('q22_cw_storia_ptr'), q22_cw_storia_mop:val('q22_cw_storia_mop'),
+    q22_cw_kinley_ptr:val('q22_cw_kinley_ptr'), q22_cw_kinley_mop:val('q22_cw_kinley_mop'),
+    q22_sp_h_ptr:val('q22_sp_h_ptr'), q22_sp_h_mop:val('q22_sp_h_mop'), q22_sp_h_mrp:val('q22_sp_h_mrp'),
+    q22_sp_kinley_ptr:val('q22_sp_kinley_ptr'), q22_sp_kinley_mop:val('q22_sp_kinley_mop'),
+    q22_sp_appy_ptr:val('q22_sp_appy_ptr'), q22_sp_appy_mop:val('q22_sp_appy_mop'),
+    q22_in_h_ptr:val('q22_in_h_ptr'), q22_in_h_mop:val('q22_in_h_mop'),
+    q22_in_mogu_ptr:val('q22_in_mogu_ptr'), q22_in_mogu_mop:val('q22_in_mogu_mop'),
+
+    // Q24
+    q24_top_scheme_brand: val('q24_top_scheme_brand'),
+    q24_top_scheme_reason: val('q24_top_scheme_reason'),
+    obs_notes: val('obs_notes'),
+  };
+
+  // Q24 per-brand
+  Q24_BRANDS.forEach((brand, i) => {
+    const key = 'q24_' + i;
+    data[`q24_${i}_brand`]  = brand.name;
+    data[`q24_${i}_types`]  = getChecked(key + '_type');
+    data[`q24_${i}_freq`]   = getChecked(key + '_freq');
+    data[`q24_${i}_detail`] = val(key + '_detail');
+    data[`q24_${i}_push`]   = val(key + '_push');
+  });
+
+  return data;
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────
+async function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('statusMsg');
+
+  if (!SCRIPT_URL) {
+    msg.className = 'status-msg error';
+    msg.textContent = '⚠ Paste your Google Apps Script URL in the setup banner first.';
+    return;
+  }
+  if (!val('meta_name') || !val('meta_store')) {
+    msg.className = 'status-msg error';
+    msg.textContent = '⚠ Please fill in Enumerator Name and Store Code before submitting.';
+    return;
+  }
+
+  btn.disabled = true;
+  msg.className = 'status-msg loading';
+  msg.textContent = 'Submitting to Google Sheets…';
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(collectAll())
+    });
+    msg.className = 'status-msg success';
+    msg.textContent = '✓ Section 4 submitted! Pricing data saved to Google Sheets.';
+    btn.textContent = '✓ Submitted';
+  } catch(err) {
+    msg.className = 'status-msg error';
+    msg.textContent = '✗ Submission failed. Check your internet connection and try again.';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
