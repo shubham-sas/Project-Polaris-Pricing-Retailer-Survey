@@ -409,20 +409,9 @@ function App() {
   };
 
   const validateSection2 = () => {
-    // Relaxed validation — only require MOP+MRP if distributor price is entered
-    const newErrors = {};
-    Object.entries(section2Data).forEach(([brandId, data]) => {
-      ['lowest', 'highest'].forEach(type => {
-        if (data[type]?.distributorPrice) {
-          if (!data[type].mop) newErrors[`${brandId}-${type}-mop`] = 'Required';
-          if (!data[type].mrp) newErrors[`${brandId}-${type}-mrp`] = 'Required';
-        }
-      });
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
+  setErrors({});
+  return true;
+};
   const handleSubmit = async () => {
     // ── Flatten all data into a single row for Google Sheets ──
     const flat = {
